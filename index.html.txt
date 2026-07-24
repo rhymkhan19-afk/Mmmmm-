@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مؤسسة الإحسان | مشاريع الخير</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&family=Tajawal:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #10B981; /* أخضر زمردي إسلامي */
+            --primary-dark: #059669;
+            --secondary: #F59E0B; /* ذهبي */
+            --bg-dark: #0B0F19; /* كحلي/أسود ليلي */
+            --bg-card: #151E2E;
+            --bg-card-hover: #1E293B;
+            --text-light: #F8FAFC;
+            --text-muted: #94A3B8;
+            --border-color: rgba(255, 255, 255, 0.05);
+            --glass-bg: rgba(21, 30, 46, 0.7);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            line-height: 1.6;
+            overflow-x: hidden;
+            background-image: radial-gradient(circle at 50% 0%, #1a2a42 0%, transparent 50%);
+        }
+
+        /* --- شريط التمرير --- */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-dark); }
+        ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 4px; }
+
+        /* --- الهيدر (الشريط العلوي) --- */
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-color);
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 5%;
+            transition: all 0.3s ease;
+        }
+
+        .logo {
+            font-family: 'Tajawal', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .logo i { color: var(--secondary); }
+
+        /* --- مؤقت الصلاة في الهيدر --- */
+        .header-timer {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            padding: 5px 20px;
+            border-radius: 50px;
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.1);
+        }
+        .timer-label { font-size: 12px; color: var(--text-muted); }
+        .timer-value { font-size: 18px; font-weight: 700; color: var(--secondary); letter-spacing: 2px; }
+
+        .auth-buttons button {
+            background: transparent;
+            color: var(--text-light);
+            border: 1px solid var(--text-muted);
+            padding: 8px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.3s;
+            margin-right: 10px;
+        }
+        .auth-buttons .btn-login {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+        }
+        .auth-buttons .btn-login:hover {
+            background: var(--primary-dark);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.5);
+            transform: translateY(-2px);
+        }
+
+        /* --- الحاوية الرئيسية --- */
+        main {
+            margin-top: 100px;
+            padding: 20px 5%;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 28px;
+            margin-bottom: 40px;
+            color: #fff;
+            position: relative;
+        }
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: var(--primary);
+            border-radius: 2px;
+        }
+
+        /* --- قسم الصلاة --- */
+        .prayer-section {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            margin-bottom: 50px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .location-btn {
+            display: block;
+            margin: 0 auto 30px auto;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 10px 20px rgba(16, 185, 129, 0.2);
+        }
+        .location-btn:hover { transform: scale(1.05); }
+
+        .prayer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .prayer-card {
+            background: rgba(0,0,0,0.2);
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            padding: 20px 10px;
+            text-align: center;
+            transition: 0.4s;
+            position: relative;
+        }
+        .prayer-card.active {
+            background: rgba(16, 185, 129, 0.1);
+            border-color: var(--primary);
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.2);
+            transform: translateY(-5px);
+        }
+        .prayer-name { font-size: 18px; color: var(--text-muted); margin-bottom: 10px; }
+        .prayer-card.active .prayer-name { color: var(--primary); font-weight: bold; }
+        .prayer-time { font-size: 24px; font-weight: 700; color: #fff; font-family: sans-serif;}
+
+        /* --- قسم الأذكار --- */
+        .adhkar-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 50px;
+        }
+        .adhkar-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .adhkar-card:hover {
+            border-color: var(--primary);
+            background: var(--bg-card-hover);
+        }
+        .adhkar-card i { font-size: 40px; color: var(--secondary); margin-bottom: 15px; }
+        .adhkar-card h3 { font-size: 20px; margin-bottom: 10px; }
+
+        /* --- قسم التبرعات الاحترافي --- */
+        .donation-section {
+            background: linear-gradient(145deg, #151E2E, #0f1522);
+            border-radius: 20px;
+            padding: 40px;
+            border: 1px solid rgba(245, 158, 11, 0.2);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+            margin-bottom: 50px;
+            text-align: center;
+        }
+        .trust-badges {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 30px;
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+        .trust-badges span { display: flex; align-items: center; gap: 5px; }
+        .trust-badges i { color: var(--primary); }
+
+        .payment-methods { display: none; margin-top: 30px; }
+        .payment-card {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: 0.3s;
+        }
+        .payment-card:hover { border-color: var(--secondary); }
+        .pay-details h4 { font-size: 22px; color: #fff; margin-bottom: 5px; text-align: right;}
+        .pay-details p { color: var(--text-muted); font-size: 15px; text-align: right; }
+        .copy-acc {
+            color: var(--secondary);
+            font-size: 24px;
+            font-family: monospace;
+            background: rgba(245, 158, 11, 0.1);
+            padding: 5px 15px;
+            border-radius: 8px;
+            user-select: all;
+            cursor: copy;
+        }
+        
+        /* زر باينانس للدفع الفوري */
+        .binance-btn {
+            background: #FCD535; /* لون باينانس الرسمي */
+            color: #1E2329;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: 800;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            justify-content: center;
+            transition: 0.3s;
+            margin-top: 20px;
+            text-decoration: none;
+        }
+        .binance-btn:hover { background: #f0c822; transform: translateY(-2px); box-shadow: 0 10px 20px rgba(252, 213, 53, 0.2); }
+        .binance-btn img { width: 24px; }
+
+        /* --- المودال (النوافذ المنبثقة) لتسجيل الدخول وبوابة الدفع --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(5px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .modal-overlay.active { display: flex; opacity: 1; }
+        
+        .modal-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 40px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            position: relative;
+            transform: translateY(-50px);
+            transition: transform 0.3s ease;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.7);
+        }
+        .modal-overlay.active .modal-box { transform: translateY(0); }
+        .close-modal {
+            position: absolute; top: 15px; left: 15px;
+            color: var(--text-muted); cursor: pointer; font-size: 20px;
+        }
+        
+        /* فورم تسجيل الدخول */
+        .form-group { margin-bottom: 20px; text-align: right; }
+        .form-group label { display: block; margin-bottom: 8px; color: var(--text-muted); font-size: 14px;}
+        .form-group input {
+            width: 100%; padding: 12px 15px;
+            background: rgba(0,0,0,0.5);
+            border: 1px solid var(--border-color);
+            border-radius: 8px; color: #fff;
+            outline: none; transition: 0.3s;
+        }
+        .form-group input:focus { border-color: var(--primary); }
+        
+        .btn-submit {
+            width: 100%; background: var(--primary); color: #fff;
+            border: none; padding: 12px; border-radius: 8px;
+            font-size: 16px; font-weight: bold; cursor: pointer;
+            margin-bottom: 15px;
+        }
+        
+        .google-login {
+            width: 100%; background: #fff; color: #333;
+            border: none; padding: 12px; border-radius: 8px;
+            font-size: 15px; font-weight: bold; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            transition: 0.3s;
+        }
+        .google-login:hover { background: #f1f1f1; }
+        .google-login img { width: 20px; }
+
+        .divider { display: flex; align-items: center; margin: 20px 0; color: var(--text-muted); }
+        .divider::before, .divider::after { content: ''; flex: 1; border-bottom: 1px solid var(--border-color); }
+        .divider span { padding: 0 10px; font-size: 12px; }
+
+        /* بوابة الدفع الوهمية */
+        .gateway-loader {
+            border: 4px solid rgba(255,255,255,0.1);
+            border-top: 4px solid #FCD535;
+            border-radius: 50%;
+            width: 50px; height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* --- الفوتر --- */
+        footer {
+            background: var(--bg-card);
+            border-top: 1px solid var(--border-color);
+            padding: 40px 5%;
+            text-align: center;
+        }
+        .social-links { display: flex; justify-content: center; gap: 15px; margin-bottom: 20px; }
+        .social-btn {
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+            padding: 10px 25px; border-radius: 50px; color: #fff; text-decoration: none;
+            font-weight: bold; font-size: 15px; transition: 0.3s;
+        }
+        .whatsapp { background: #25D366; }
+        .whatsapp:hover { box-shadow: 0 5px 15px rgba(37, 211, 102, 0.4); transform: translateY(-3px);}
+        .telegram { background: #0088cc; }
+        .telegram:hover { box-shadow: 0 5px 15px rgba(0, 136, 204, 0.4); transform: translateY(-3px);}
+
+        /* التجاوب مع الجوال (Responsive) */
+        @media (max-width: 768px) {
+            header { flex-direction: column; gap: 15px; padding: 15px; }
+            .header-timer { margin-top: 10px; }
+            main { margin-top: 140px; }
+            .payment-card { flex-direction: column; text-align: center; gap: 15px; }
+            .pay-details h4, .pay-details p { text-align: center; }
+            .auth-buttons { display: flex; gap: 10px; }
+            .auth-buttons button { margin: 0; padding: 6px 12px; font-size: 14px;}
+        }
+    </style>
+</head>
+<body>
+
+    <!-- الهيدر -->
+    <header>
+        <div class="logo">
+            <i class="fa-solid fa-mosque"></i>
+            مؤسسة الإحسان
+        </div>
+        
+        <div class="header-timer">
+            <span class="timer-label" id="next-prayer-name">الوقت المتبقي للصلاة القادمة</span>
+            <span class="timer-value" id="countdown-timer">--:--:--</span>
+        </div>
+
+        <div class="auth-buttons">
+            <button onclick="openModal('login-modal')">تسجيل الدخول</button>
+            <button class="btn-login" onclick="openModal('login-modal')">إنشاء حساب</button>
+        </div>
+    </header>
+
+    <main>
+        <!-- قسم الصلاة -->
+        <section class="prayer-section">
+            <h2 class="section-title">مواقيت الصلاة الدقيقة</h2>
+            <button class="location-btn" onclick="fetchPrayerTimes()">
+                <i class="fa-solid fa-location-dot"></i> حدد موقعي لضبط المواقيت
+            </button>
+            <div id="prayer-loading" style="text-align: center; color: var(--text-muted); display: none;">جاري جلب الأوقات...</div>
+            <div class="prayer-grid" id="prayer-grid" style="display: none;">
+                <!-- تُعبأ برمجياً -->
+            </div>
+        </section>
+
+        <!-- قسم الأذكار -->
+        <h2 class="section-title">حصن المسلم</h2>
+        <section class="adhkar-grid">
+            <div class="adhkar-card">
+                <i class="fa-solid fa-sun"></i>
+                <h3>أذكار الصباح</h3>
+                <p style="color: var(--text-muted); font-size: 14px;">ابدأ يومك بحفظ الله ورعايته</p>
+            </div>
+            <div class="adhkar-card">
+                <i class="fa-solid fa-moon"></i>
+                <h3>أذكار المساء</h3>
+                <p style="color: var(--text-muted); font-size: 14px;">حصن نفسك في ليلتك</p>
+            </div>
+            <div class="adhkar-card">
+                <i class="fa-solid fa-hands-praying"></i>
+                <h3>أذكار ما بعد الصلاة</h3>
+                <p style="color: var(--text-muted); font-size: 14px;">داوم عليها بعد كل فريضة</p>
+            </div>
+        </section>
+
+        <!-- قسم التبرعات -->
+        <section class="donation-section">
+            <h2 class="section-title" style="color: var(--secondary);">مشاريع كفالة الأسر المتعففة (اليمن)</h2>
+            <p style="color: #ccc; margin-bottom: 25px; max-width: 600px; margin-left: auto; margin-right: auto;">
+                تبرعك يصنع فارقاً حقيقياً في حياة الأسر المحتاجة. النظام يحدد طرق التبرع المتاحة حسب دولتك لضمان سهولة وموثوقية التحويل.
+            </p>
+            
+            <div class="trust-badges">
+                <span><i class="fa-solid fa-shield-halved"></i> تحويل آمن</span>
+                <span><i class="fa-solid fa-check-circle"></i> مؤسسة موثوقة</span>
+                <span><i class="fa-solid fa-globe"></i> يقبل التبرع الدولي</span>
+            </div>
+
+            <div id="donation-loading" style="color: var(--text-muted);">جاري تهيئة بوابات الدفع الآمنة...</div>
+            
+            <div id="payment-methods" class="payment-methods">
+                <!-- طرق اليمن -->
+                <div id="yemen-methods" style="display: none;">
+                    <div class="payment-card">
+                        <div class="pay-details">
+                            <h4>بنك البسيري</h4>
+                            <p>الحساب الرسمي لكفالة الأيتام والأسر</p>
+                        </div>
+                        <div class="copy-acc">34310</div>
+                    </div>
+                    <div class="payment-card">
+                        <div class="pay-details">
+                            <h4>محفظة B-Cash</h4>
+                            <p>تحويل سريع ومباشر</p>
+                        </div>
+                        <div class="copy-acc">784521728</div>
+                    </div>
+                </div>
+
+                <!-- طريقة دولية (باينانس) -->
+                <div class="payment-card" style="flex-direction: column; align-items: stretch; border-color: rgba(252, 213, 53, 0.5);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                        <div class="pay-details">
+                            <h4 style="color: #FCD535;">تطبيق Binance Pay</h4>
+                            <p>تبرع فوري آمن من أي مكان بالعالم (ID: 1256032595)</p>
+                        </div>
+                        <i class="fa-brands fa-btc" style="font-size: 30px; color: #FCD535;"></i>
+                    </div>
+                    <button class="binance-btn" onclick="openPaymentGateway()">
+                        <img src="https://cryptologos.cc/logos/binance-coin-bnb-logo.png" alt="BNB">
+                        الدفع الفوري عبر التطبيق
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- الفوتر -->
+    <footer>
+        <h3 style="color: #fff; margin-bottom: 15px;">نسعد بتواصلكم واستفساراتكم</h3>
+        <div class="social-links">
+            <a href="https://wa.me/967734654635" target="_blank" class="social-btn whatsapp">
+                <i class="fa-brands fa-whatsapp"></i> واتساب
+            </a>
+            <a href="https://t.me/I_OO44" target="_blank" class="social-btn telegram">
+                <i class="fa-brands fa-telegram"></i> تيليجرام
+            </a>
+        </div>
+        <p style="color: var(--text-muted); font-size: 14px;">© 2026 جميع الحقوق محفوظة - مشروع الخير.</p>
+    </footer>
+
+    <!-- مودال تسجيل الدخول -->
+    <div class="modal-overlay" id="login-modal" onclick="closeModal(event, 'login-modal')">
+        <div class="modal-box">
+            <i class="fa-solid fa-xmark close-modal" onclick="closeModalBtn('login-modal')"></i>
+            <h2 style="color: #fff; margin-bottom: 20px;">تسجيل الدخول / إنشاء حساب</h2>
+            
+            <button class="google-login">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" alt="Google">
+                المتابعة باستخدام Google
+            </button>
+            
+            <div class="divider"><span>أو باستخدام البريد الإلكتروني</span></div>
+            
+            <form onsubmit="event.preventDefault(); alert('هذه واجهة تصميمية. سيتم تفعيل قواعد البيانات لاحقاً.');">
+                <div class="form-group">
+                    <label>البريد الإلكتروني</label>
+                    <input type="email" placeholder="example@gmail.com" required>
+                </div>
+                <div class="form-group">
+                    <label>كلمة المرور</label>
+                    <input type="password" placeholder="••••••••" required>
+                </div>
+                <button type="submit" class="btn-submit">دخول سريع</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- مودال بوابة الدفع الوهمية لباينانس -->
+    <div class="modal-overlay" id="gateway-modal">
+        <div class="modal-box" style="background: #1E2329; border: 1px solid #FCD535;">
+            <div class="gateway-loader"></div>
+            <h3 style="color: #FCD535; margin-bottom: 10px;">جاري فتح تطبيق Binance...</h3>
+            <p style="color: #848E9C; font-size: 14px;">
+                الرجاء إكمال عملية الدفع من داخل التطبيق للـ Pay ID: <strong style="color: #fff;">1256032595</strong>
+            </p>
+            <button onclick="closeModalBtn('gateway-modal')" style="margin-top: 20px; background: transparent; border: 1px solid #848E9C; color: #848E9C; padding: 5px 15px; border-radius: 5px; cursor: pointer;">إلغاء</button>
+        </div>
+    </div>
+
+    <script>
+        // --- 1. دوال النوافذ المنبثقة (Modals) ---
+        function openModal(id) {
+            document.getElementById(id).classList.add('active');
+        }
+        function closeModalBtn(id) {
+            document.getElementById(id).classList.remove('active');
+        }
+        function closeModal(e, id) {
+            if (e.target.id === id) closeModalBtn(id);
+        }
+
+        function openPaymentGateway() {
+            openModal('gateway-modal');
+            // محاكاة تحويل لتطبيق باينانس بعد 3 ثواني
+            setTimeout(() => {
+                // في التطبيق الحقيقي هنا يتم وضع رابط الـ Deep Link لتطبيق باينانس
+                // مثال: window.location.href = "binance://pay?id=1256032595";
+                alert("في التطبيق الحقيقي المربوط، سيتم فتح تطبيق Binance على هاتفك مباشرة لاستكمال الدفع.");
+                closeModalBtn('gateway-modal');
+            }, 3000);
+        }
+
+        // --- 2. التحقق من الدولة (اليمن أو غيرها) ---
+        fetch('https://ipapi.co/json/')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('donation-loading').style.display = 'none';
+                document.getElementById('payment-methods').style.display = 'block';
+                
+                if (data.country_code === 'YE') {
+                    document.getElementById('yemen-methods').style.display = 'block';
+                }
+            })
+            .catch(() => {
+                document.getElementById('donation-loading').style.display = 'none';
+                document.getElementById('payment-methods').style.display = 'block';
+                document.getElementById('yemen-methods').style.display = 'block'; // عرض الكل عند الفشل
+            });
+
+        // --- 3. جلب أوقات الصلاة والعد التنازلي ---
+        let prayerTimesData = {};
+        let countdownInterval;
+
+        function fetchPrayerTimes() {
+            if (navigator.geolocation) {
+                document.getElementById('prayer-loading').style.display = 'block';
+                navigator.geolocation.getCurrentPosition(
+                    position => getAladhanAPI(position.coords.latitude, position.coords.longitude),
+                    error => alert("يرجى السماح بتحديد الموقع لعرض الأوقات.")
+                );
+            }
+        }
+
+        function getAladhanAPI(lat, lon) {
+            fetch(`https://api.aladhan.com/v1/timings?latitude=${lat}&longitude=${lon}&method=4`)
+                .then(res => res.json())
+                .then(data => {
+                    prayerTimesData = data.data.timings;
+                    renderPrayerGrid(prayerTimesData);
+                    startCountdown();
+                    document.getElementById('prayer-loading').style.display = 'none';
+                    document.getElementById('prayer-grid').style.display = 'grid';
+                });
+        }
+
+        function renderPrayerGrid(times) {
+            const prayers = [
+                { name: 'الفجر', id: 'Fajr' },
+                { name: 'الشروق', id: 'Sunrise' },
+                { name: 'الظهر', id: 'Dhuhr' },
+                { name: 'العصر', id: 'Asr' },
+                { name: 'المغرب', id: 'Maghrib' },
+                { name: 'العشاء', id: 'Isha' }
+            ];
+            
+            let html = '';
+            prayers.forEach(p => {
+                html += `
+                    <div class="prayer-card" id="card-${p.id}">
+                        <div class="prayer-name">${p.name}</div>
+                        <div class="prayer-time">${times[p.id]}</div>
+                    </div>
+                `;
+            });
+            document.getElementById('prayer-grid').innerHTML = html;
+        }
+
+        function startCountdown() {
+            if(countdownInterval) clearInterval(countdownInterval);
+            
+            countdownInterval = setInterval(() => {
+                const now = new Date();
+                const currentTime = now.getHours() * 60 + now.getMinutes();
+                
+                const prayers = [
+                    { name: 'الفجر', id: 'Fajr' },
+                    { name: 'الظهر', id: 'Dhuhr' },
+                    { name: 'العصر', id: 'Asr' },
+                    { name: 'المغرب', id: 'Maghrib' },
+                    { name: 'العشاء', id: 'Isha' }
+                ];
+
+                let nextPrayer = null;
+                let nextPrayerTimeMinutes = 0;
+
+                // إعادة تعيين الألوان
+                document.querySelectorAll('.prayer-card').forEach(c => c.classList.remove('active'));
+
+                for (let p of prayers) {
+                    let [hours, minutes] = prayerTimesData[p.id].split(':').map(Number);
+                    let timeInMinutes = hours * 60 + minutes;
+                    
+                    if (timeInMinutes > currentTime) {
+                        nextPrayer = p;
+                        nextPrayerTimeMinutes = timeInMinutes;
+                        break;
+                    }
+                }
+
+                // إذا مرت العشاء، الصلاة القادمة هي الفجر اليوم التالي
+                if (!nextPrayer) {
+                    nextPrayer = prayers[0];
+                    let [hours, minutes] = prayerTimesData.Fajr.split(':').map(Number);
+                    nextPrayerTimeMinutes = (24 * 60) + (hours * 60 + minutes);
+                }
+
+                // تفعيل كرت الصلاة القادمة
+                const activeCard = document.getElementById(`card-${nextPrayer.id}`);
+                if(activeCard) activeCard.classList.add('active');
+
+                // حساب الفرق
+                let diff = nextPrayerTimeMinutes - currentTime;
+                let h = Math.floor(diff / 60);
+                let m = diff % 60;
+                let s = 59 - now.getSeconds(); // تقريبي للثواني
+
+                document.getElementById('next-prayer-name').innerText = `باقي على ${nextPrayer.name}`;
+                document.getElementById('countdown-timer').innerText = 
+                    `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+
+            }, 1000);
+        }
+    </script>
+</body>
+</html>
